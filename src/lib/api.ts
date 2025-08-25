@@ -24,7 +24,7 @@ function generateHijabAvatars(firstName: string, lastName: string) {
   // Use DiceBear API with hijab-style avatars (Avataaars style with hijab option)
   const diceBearUrl = 'https://api.dicebear.com/7.x/avataaars/png';
   const params = new URLSearchParams({
-    seed: fullName,
+    _seed: fullName,
     accessories: 'hijab',
     accessoriesColor: '262e33,65c9ff,f88c49,ff5722,ff9800,ffc107,ffeb3b,cddc39,8bc34a,4caf50,009688,00bcd4,2196f3,3f51b5,673ab7,9c27b0,e91e63',
     backgroundColor: 'f3f4f6',
