@@ -21,9 +21,6 @@ export class ApiError extends Error {
 function generateHijabAvatars(firstName: string, lastName: string) {
   const fullName = `${firstName} ${lastName}`;
   
-  // Generate a consistent seed based on the name for consistent avatars
-  const seed = fullName.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-  
   // Use DiceBear API with hijab-style avatars (Avataaars style with hijab option)
   const diceBearUrl = 'https://api.dicebear.com/7.x/avataaars/png';
   const params = new URLSearchParams({
