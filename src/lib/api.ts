@@ -13,7 +13,7 @@ export class ApiError extends Error {
 
 /**
  * Generates hijab avatar URLs based on user name and gender
- * Uses a combination of avatar services to provide hijab-wearing profile pictures
+ * Uses DiceBear API to provide hijab-wearing profile pictures
  * @param firstName - User's first name
  * @param lastName - User's last name
  * @returns Object with hijab avatar URLs in different sizes
@@ -21,26 +21,72 @@ export class ApiError extends Error {
 function generateHijabAvatars(firstName: string, lastName: string) {
   const fullName = `${firstName} ${lastName}`;
   
-  // Use DiceBear API with hijab-style avatars (Avataaars style with hijab option)
-  const diceBearUrl = 'https://api.dicebear.com/7.x/avataaars/png';
+  // Use DiceBear API with avataaars style
+  const diceBearUrl = 'https://api.dicebear.com/8.x/avataaars/png';
+  
+  // Simplified parameters that work reliably
   const params = new URLSearchParams({
-    _seed: fullName,
-    accessories: 'hijab',
-    accessoriesColor: '262e33,65c9ff,f88c49,ff5722,ff9800,ffc107,ffeb3b,cddc39,8bc34a,4caf50,009688,00bcd4,2196f3,3f51b5,673ab7,9c27b0,e91e63',
+    seed: fullName,
+    // Use top instead of accessories for hijab
+    top: 'hijab',
+    topColor: '262e33,65c9ff,f88c49,ff5722,ff9800,ffc107',
     backgroundColor: 'f3f4f6',
     clothingGraphic: 'none',
     eyebrows: 'default',
     eyes: 'default',
     facialHair: 'none',
     mouth: 'default',
-    skin: 'fdbcb4,edb98a,fd9841,f8d25c,f1c27d,ffdbac'
+    skinColor: 'fdbcb4,edb98a,fd9841,f8d25c,f1c27d,ffdbac'
   });
 
+  const baseUrl = `${diceBearUrl}?${params.toString()}`;
+
   return {
-    large: `${diceBearUrl}?${params.toString()}&size=256`,
-    medium: `${diceBearUrl}?${params.toString()}&size=128`,
-    thumbnail: `${diceBearUrl}?${params.toString()}&size=64`
+    large: `${baseUrl}&size=256`,
+    medium: `${baseUrl}&size=128`,
+    thumbnail: `${baseUrl}&size=64`
   };
+}
+
+/**
+ * Alternative hijab avatar generator using different approach
+ * Fallback if main generator doesn't work
+ */
+function generateAlternativeHijabAvatars(firstName: string, lastName: string) {
+  const fullName = `${firstName} ${lastName}`;
+  
+  // Use Adventurer style which has better hijab support
+  const diceBearUrl = 'https://api.dicebear.com/8.x/adventurer/png';
+  
+  const params = new URLSearchParams({
+    seed: fullName,
+    backgroundColor: 'f3f4f6'
+  });
+
+  const baseUrl = `${diceBearUrl}?${params.toString()}`;
+
+  return {
+    large: `${baseUrl}&size=256`,
+    medium: `${baseUrl}&size=128`,
+    thumbnail: `${baseUrl}&size=64`
+  };
+}
+
+/**
+ * Test avatar URL validity
+ * @param url - Avatar URL to test
+ * @returns Promise<boolean> - True if URL is valid and accessible
+ */
+async function testAvatarUrl(url: string): Promise<boolean> {
+  try {
+    const response = await fetch(url, { 
+      method: 'HEAD',
+      signal: AbortSignal.timeout(3000)
+    });
+    return response.ok;
+  } catch {
+    return false;
+  }
 }
 
 /**
@@ -84,8 +130,15 @@ export async function fetchRandomUser(): Promise<User> {
       throw new ApiError('Invalid user data: missing required fields');
     }
 
-    // Replace profile pictures with hijab avatars
-    const hijabAvatars = generateHijabAvatars(user.name.first, user.name.last);
+    // Generate hijab avatars
+    let hijabAvatars = generateHijabAvatars(user.name.first, user.name.last);
+
+    // Test if the primary avatar URL works, fallback to alternative if not
+    const isValidUrl = await testAvatarUrl(hijabAvatars.medium);
+    if (!isValidUrl) {
+      console.warn('Primary hijab avatar failed, using alternative generator');
+      hijabAvatars = generateAlternativeHijabAvatars(user.name.first, user.name.last);
+    }
 
     return {
       ...user,
@@ -126,4 +179,27 @@ export async function checkApiHealth(): Promise<boolean> {
   } catch {
     return false;
   }
+}
+
+/**
+ * Debug function to test avatar generation
+ * Use this to verify avatar URLs are working
+ */
+export async function debugAvatarGeneration(firstName: string, lastName: string) {
+  console.log('Testing avatar generation for:', firstName, lastName);
+  
+  const primary = generateHijabAvatars(firstName, lastName);
+  const alternative = generateAlternativeHijabAvatars(firstName, lastName);
+  
+  console.log('Primary avatars:', primary);
+  console.log('Alternative avatars:', alternative);
+  
+  // Test URLs
+  const primaryValid = await testAvatarUrl(primary.medium);
+  const altValid = await testAvatarUrl(alternative.medium);
+  
+  console.log('Primary avatar valid:', primaryValid);
+  console.log('Alternative avatar valid:', altValid);
+  
+  return { primary, alternative, primaryValid, altValid };
 }
