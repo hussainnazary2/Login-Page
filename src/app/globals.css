@@ -1,0 +1,255 @@
+/* Import Tailwind CSS v4 and animations */
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/* Custom variant for dark mode */
+@custom-variant dark (&:is(.dark *));
+
+/* Theme configuration with CSS custom properties */
+@theme inline {
+  /* Typography */
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  
+  /* Core colors */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  
+  /* UI element colors */
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  
+  /* Interactive elements */
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-destructive: var(--destructive);
+  
+  /* Border radius system */
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+/* Light theme color palette */
+:root {
+  /* Base configuration */
+  --radius: 0.625rem;
+  
+  /* Core colors - Light theme */
+  --background: oklch(1 0 0); /* Pure white */
+  --foreground: oklch(0.145 0 0); /* Near black */
+  
+  /* Surface colors */
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  
+  /* Brand colors */
+  --primary: oklch(0.205 0 0); /* Dark gray for primary actions */
+  --primary-foreground: oklch(0.985 0 0); /* Light text on primary */
+  
+  /* Secondary colors */
+  --secondary: oklch(0.97 0 0); /* Light gray */
+  --secondary-foreground: oklch(0.205 0 0);
+  
+  /* Muted colors for less prominent elements */
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  
+  /* Accent colors */
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  
+  /* Interactive elements */
+  --border: oklch(0.922 0 0); /* Light border */
+  --input: oklch(0.922 0 0); /* Input background */
+  --ring: oklch(0.708 0 0); /* Focus ring */
+  
+  /* Status colors */
+  --destructive: oklch(0.577 0.245 27.325); /* Red for errors */
+}
+
+/* Dark theme color palette */
+.dark {
+  --background: oklch(0.145 0 0); /* Dark background */
+  --foreground: oklch(0.985 0 0); /* Light text */
+  
+  /* Surface colors */
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  
+  /* Brand colors */
+  --primary: oklch(0.922 0 0); /* Light for dark theme */
+  --primary-foreground: oklch(0.205 0 0);
+  
+  /* Secondary colors */
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  
+  /* Muted colors */
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  
+  /* Accent colors */
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  
+  /* Interactive elements */
+  --border: oklch(1 0 0 / 10%); /* Subtle border */
+  --input: oklch(1 0 0 / 15%); /* Input background */
+  --ring: oklch(0.556 0 0); /* Focus ring */
+  
+  /* Status colors */
+  --destructive: oklch(0.704 0.191 22.216); /* Red for errors */
+}
+
+/* Base layer styles for consistent foundation */
+@layer base {
+  /* Reset and base styles */
+  * {
+    @apply border-border;
+  }
+  
+  *:focus-visible {
+    @apply outline-2 outline-offset-2 outline-ring;
+  }
+  
+  /* Body and HTML base styles */
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply bg-background text-foreground font-sans;
+    /* Enhanced text rendering */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    /* Improve touch scrolling on iOS */
+    -webkit-overflow-scrolling: touch;
+    /* Prevent horizontal scroll */
+    overflow-x: hidden;
+  }
+  
+  /* Headings optimization */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold tracking-tight;
+    text-wrap: balance;
+  }
+  
+  /* Paragraph optimization */
+  p {
+    text-wrap: pretty;
+  }
+  
+  /* Interactive elements base styles */
+  button, 
+  input, 
+  textarea, 
+  select {
+    @apply font-sans;
+  }
+  
+  /* Link base styles */
+  a {
+    @apply text-foreground;
+    text-decoration-skip-ink: auto;
+  }
+  
+  /* Image optimization */
+  img {
+    @apply max-w-full h-auto;
+  }
+}
+
+/* Accessibility and responsive design utilities */
+@layer utilities {
+  /* Screen reader only content */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  
+  /* Skip link for keyboard navigation */
+  .skip-link {
+    @apply fixed top-0 left-0 z-50 px-4 py-2 text-sm font-medium;
+    @apply bg-primary text-primary-foreground rounded-md;
+    @apply transform -translate-y-full transition-transform duration-300;
+    @apply focus:translate-y-2 focus:translate-x-2;
+  }
+  
+  /* Mobile touch targets */
+  @media (max-width: 768px) {
+    button, 
+    input[type="button"], 
+    input[type="submit"], 
+    input[type="reset"],
+    [role="button"],
+    a[role="button"] {
+      min-height: 44px;
+      min-width: 44px;
+    }
+  }
+  
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    * {
+      @apply border-2;
+    }
+    
+    button:focus-visible,
+    input:focus-visible,
+    [role="button"]:focus-visible {
+      @apply outline-4;
+    }
+  }
+  
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+    
+    html {
+      scroll-behavior: auto;
+    }
+  }
+  
+  /* Print styles */
+  @media print {
+    * {
+      @apply text-black bg-white;
+    }
+    
+    .no-print {
+      display: none !important;
+    }
+  }
+}
